@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wingo 30s</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI, Arial;
+background:radial-gradient(circle at top,#0b1022,#020409);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+}
+
+.panel{
+width:420px;
+max-width:95%;
+background:rgba(10,15,30,.7);
+backdrop-filter:blur(15px);
+border-radius:20px;
+padding:22px;
+border:1px solid rgba(255,255,255,.08);
+box-shadow:0 0 60px rgba(0,0,0,.9);
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.logo{
+font-weight:900;
+font-size:20px;
+color:#fcd535;
+}
+
+.status{
+font-size:12px;
+color:#00ffc8;
+}
+
+/* TIMER */
+
+.timerbox{
+margin-top:12px;
+background:#060a16;
+padding:20px;
+border-radius:12px;
+text-align:center;
+}
+
+.timer{
+font-size:60px;
+font-weight:bold;
+color:#fcd535;
+}
+
+.result{
+font-size:32px;
+font-weight:900;
+margin-top:6px;
+}
+
+.big{color:#00ffa2;}
+.small{color:#ff4d6d;}
+
+/* PREDICTION */
+
+.predict{
+margin-top:12px;
+background:#060a16;
+padding:15px;
+border-radius:12px;
+}
+
+.signal{
+font-size:22px;
+font-weight:bold;
+}
+
+.bar{
+height:6px;
+background:#11182c;
+border-radius:5px;
+margin-top:5px;
+overflow:hidden;
+}
+
+.fill{
+height:6px;
+background:#00f2ff;
+width:60%;
+transition:1s;
+}
+
+.stats{
+display:flex;
+justify-content:space-between;
+margin-top:8px;
+font-size:13px;
+}
+
+.history{
+margin-top:12px;
+height:150px;
+overflow:auto;
+background:#060a16;
+border-radius:12px;
+padding:10px;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:6px;
+border-bottom:1px solid #182035;
+}
+
+.online{
+font-size:12px;
+color:#8f9db7;
+}
+
+/* FLOAT BUTTONS */
+
+.floating-buttons{
+position:fixed;
+bottom:20px;
+right:20px;
+display:flex;
+gap:10px;
+}
+
+button, .btn{
+display:flex;
+align-items:center;
+gap:1px;
+padding:12px 16px;
+border-radius:20px;
+font-weight:bold;
+text-decoration:none;
+border:none;
+cursor:pointer;
+}
+
+.refresh-btn{
+background:#00f2ff;
+color:black;
+box-shadow:0 0 15px rgba(0,242,255,.8);
+}
+
+.register-btn{
+background:#fcd535;
+color:black;
+box-shadow:0 0 20px rgba(252,213,53,.8);
+}
+
+.telegram-btn{
+background:#0088cc;
+color:white;
+box-shadow:0 0 20px rgba(0,136,204,.7);
+}
+
+.icon{
+width:18px;
+height:18px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="panel">
+
+<div class="header">
+<div class="logo">WinGo 30s</div>
+<div class="status">ONLINE</div>
+</div>
+
+<div class="timerbox">
+
+<div>LAST RESULT</div>
+
+<div class="timer" id="timer">30</div>
+
+<div class="result" id="result">WAITING</div>
+
+</div>
+
+<div class="predict">
+
+<div class="signal">
+Signal: <span id="signal" class="big">BIG</span>
+</div>
+
+<div>
+Confidence: <span id="conf">70</span>%
+</div>
+
+<div class="bar">
+<div class="fill" id="probBar"></div>
+</div>
+
+<div class="stats">
+<span>BIG: <span id="big">0</span></span>
+<span>SMALL: <span id="small">0</span></span>
+</div>
+
+<div class="online">
+Users Online: <span id="online">135</span>
+</div>
+
+</div>
+
+<div class="history" id="history"></div>
+
+</div>
+
+<!-- FLOATING BUTTONS -->
+
+<div class="floating-buttons">
+
+<button class="refresh-btn" onclick="location.reload()">
+
+<img class="icon" src="https://cdn-icons-png.flaticon.com/512/545/545674.png">
+Refresh
+
+</button>
+
+<a class="btn register-btn"
+href="https://www.jalwagame8.com/#/register?invitationCode=81786429878"
+target="_blank">
+
+<img class="icon" src="https://cdn-icons-png.flaticon.com/512/747/747376.png">
+Register
+
+</a>
+
+<a class="btn telegram-btn"
+href="https://t.me/r4ixiii"
+target="_blank">
+
+<img class="icon" src="https://cdn-icons-png.flaticon.com/512/2111/2111646.png">
+Telegram
+
+</a>
+
+</div>
+
+<script>
+
+let big=0
+let small=0
+
+function getRemainingSeconds(){
+
+let now=new Date()
+let seconds=now.getSeconds()
+return 30-(seconds%30)
+
+}
+
+function randomResult(){
+
+if(Math.random()>0.5){
+big++
+return "BIG"
+}else{
+small++
+return "SMALL"
+}
+
+}
+
+function updatePrediction(){
+
+let signal = big>small ? "SMALL" : "BIG"
+
+let conf=Math.floor(Math.random()*20)+70
+
+document.getElementById("signal").innerText=signal
+document.getElementById("signal").className=signal=="BIG"?"big":"small"
+
+document.getElementById("conf").innerText=conf
+document.getElementById("probBar").style.width=conf+"%"
+
+}
+
+setInterval(()=>{
+
+let timer=getRemainingSeconds()
+
+document.getElementById("timer").innerText=timer
+
+if(timer==30){
+
+let result=randomResult()
+
+document.getElementById("result").innerText=result
+document.getElementById("result").className="result "+(result=="BIG"?"big":"small")
+
+document.getElementById("big").innerText=big
+document.getElementById("small").innerText=small
+
+let row=document.createElement("div")
+row.className="row"
+
+row.innerHTML=`
+<span>Result</span>
+<span class="${result=="BIG"?"big":"small"}">${result}</span>
+`
+
+let history=document.getElementById("history")
+
+history.prepend(row)
+
+if(history.children.length>20){
+history.removeChild(history.lastChild)
+}
+
+updatePrediction()
+
+}
+
+},1000)
+
+setInterval(()=>{
+document.getElementById("online").innerText =
+Math.floor(Math.random()*60)+120
+},4000)
+
+</script>
+
+</body>
+</html>
